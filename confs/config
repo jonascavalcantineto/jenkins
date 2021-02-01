@@ -1,0 +1,42 @@
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUN5RENDQWJDZ0F3SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwcmRXSmwKY201bGRHVnpNQjRYRFRJd01EY3hNVEF4TWprek4xb1hEVE13TURjd09UQXhNamt6TjFvd0ZURVRNQkVHQTFVRQpBeE1LYTNWaVpYSnVaWFJsY3pDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTmp0CjVuSVFjbWNkU0NaZTB0d09GNSsvdTAyVDdGTWw4bklHZlBqb2dTYzNwS21ML0N5bmlJNEpJczdhNzFLYmtzdVMKYVcvQmRSU3VyK2VNWVo3ejNkc09MN1ZVSlF4TFMvd2Vtb2pMYnVpWXFNTjVHVnArdXVxMWFJQnphQk43NW5uNwowc3VERjR6RUVHYW5pR1c5dkQxNXJic3JCNFFESVFBRG9JanlVbHd6KzR4ME5wMTdZZjdKWlMwWEtMbmc4YXc0CmZVQVNMNkpQTjdOMG9kLzZnMEpaY05ZeXFQRURCRXA0K1ozWmpmemVpMElyZlMyVW00NkJjTk0wL2FycG1KOHUKdDZPWE5HUXpjMGcvQkx3Q2NsaTZSZE9GRVlVQjVRUkpUSlVFbVRMMVN1THZOL0hzd2YxNitKbVdMVDBCcy9ZbQpRZndvUmd0RHFGS3dZSlhjRklFQ0F3RUFBYU1qTUNFd0RnWURWUjBQQVFIL0JBUURBZ0trTUE4R0ExVWRFd0VCCi93UUZNQU1CQWY4d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFBUzFzWWh4SGp4aW9XK0NLWjVTMGFHY0plRVMKSFJEZEZEeElWU2tDSWNhZ1U3ek50UGhkMGh0TEdVaUZmTlZFMGF5NzZXYVNvNVhKWHl5VVdwTlV0YVczd2tRKwp2T2huT01Da1RGWFNrTTB4VlpUelJ4a29QdVI3UDBZd21TcHVJUkdHYjJCeVNmVTBaSlpDUGZaT0I4M3ZVYWkwCnJ2dXlPS3A5NEVnRGhSdGlyZERwcks3aTJVcXpFTmc4Y3lKcDBXSnZkMEdVOFRwejk5MVNVeXpHZFFIOFJ4ODIKT3JwRHcwcDJVcFBBQy9pNkwyVlg1SUFrUklHZDI1UWYySUhTS0FZejJ5a0MzejZrR0tCQnNLeUxvMTRkdlRxZQo0MnI0WWNud1dLTHM1MXBza0xSK05RSEthQzltUVNqalNzb2ZqVldhcit3SUIzTlFpSHQwMzlBUnY4dz0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+    server: https://D6DAB397CB72B1E13C84460E8DF44DBD.yl4.us-east-1.eks.amazonaws.com
+  name: arn:aws:eks:us-east-1:210394101369:cluster/eks-gjbl-01
+- cluster:
+    certificate-authority: funcemeKube.crt
+    server: https://haproxy-kube.funceme.br:6443
+  name: funcemek8s
+contexts:
+- context:
+    cluster: arn:aws:eks:us-east-1:210394101369:cluster/eks-gjbl-01
+    namespace: cicd
+    user: arn:aws:eks:us-east-1:210394101369:cluster/eks-gjbl-01
+  name: arn:aws:eks:us-east-1:210394101369:cluster/eks-gjbl-01
+- context:
+    cluster: funcemek8s
+    namespace: prod
+    user: funcemek8sadmin
+  name: fucemek8s
+current-context: arn:aws:eks:us-east-1:210394101369:cluster/eks-gjbl-01
+kind: Config
+preferences: {}
+users:
+- name: arn:aws:eks:us-east-1:210394101369:cluster/eks-gjbl-01
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1alpha1
+      args:
+      - --region
+      - us-east-1
+      - eks
+      - get-token
+      - --cluster-name
+      - eks-gjbl-01
+      command: aws
+      env: null
+- name: funcemek8sadmin
+  user:
+    client-certificate: funcemek8sadmin.crt
+    client-key: funcemek8sadmin.key
