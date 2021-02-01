@@ -1,0 +1,63 @@
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: jenkins
+  namespace: cicd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      containers:
+      - name: jenkins
+        image: jenkins/jenkins:lts
+        imagePullPolicy: Always
+        ports:
+        - name: pback-8080
+          containerPort: 8080
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      nodeSelector:
+        node-role.kubernetes.io/prod: ""
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins
+  namespace: cicd
+spec:
+  selector:
+    app: jenkins
+  ports:
+    - name: pback-8080
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: NodePort
+
+---
+
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: jenkins
+  namespace: cicd
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+  labels:
+    app: jenkins
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: jenkins
+              servicePort: 8080
