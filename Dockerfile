@@ -16,7 +16,7 @@ RUN add-apt-repository \
    stable"
 RUN apt-get update
 RUN apt-get install -y \
-        docker-ce=5:19.03.14~3-0~ubuntu-focal \
-        docker-ce-cli=5:19.03.14~3-0~ubuntu-focal \
+        docker-ce=5:19.03.14~3-0~debian-stretch \
+        docker-ce-cli=5:19.03.14~3-0~debian-stretch \
         containerd.io
 EXPOSE 8080 50000
