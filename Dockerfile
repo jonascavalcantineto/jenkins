@@ -1,7 +1,6 @@
 FROM jenkins/jenkins:lts
-RUN jenkins-plugin-cli --plugins docker-slaves github-branch-source:1.8
 USER root
-
+RUN jenkins-plugin-cli --plugins docker-slaves github-branch-source:1.8
 RUN apt-get update
 RUN apt-get install -y  \
     apt-transport-https \
@@ -22,7 +21,9 @@ RUN apt-get update
 RUN apt-get install -y \
         docker-ce=5:19.03.14~3-0~debian-stretch \
         docker-ce-cli=5:19.03.14~3-0~debian-stretch \
-        containerd.io
+        containerd.io \
+         python3 \
+         python3-pip
 
 #Kubectl
 RUN set -ex \
@@ -32,7 +33,25 @@ RUN set -ex \
 RUN apt-get update
 RUN apt-get install -y kubectl
 
-RUN mkdir -p $HOME/.kube
-COPY confs/config $HOME/.kube/config
+RUN mkdir -p /root/.kube
+ADD confs/config /root/.kube/config
+
+#aws-iam-authenticator
+RUN set -ex \
+        && curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.9/2020-11-02/bin/linux/amd64/aws-iam-authenticator \
+        && chmod +x ./aws-iam-authenticator \
+        && mkdir -p $HOME/bin && cp ./aws-iam-authenticator $HOME/bin/aws-iam-authenticator && export PATH=$PATH:$HOME/bin \
+        && echo 'export PATH=$PATH:$HOME/bin' >> ~/.bash_profile
+
+#eksctl
+RUN set -ex \
+        && curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp \
+        && mv /tmp/eksctl /usr/local/bin
+
+COPY confs/aws /root/.aws
+
+#awscli
+RUN pip3 install awscli --upgrade
+RUN aws eks update-kubeconfig --name eks-gjbl-01
 
 EXPOSE 8080 50000
